@@ -17,10 +17,10 @@ class Stocks_model extends CI_Model{
             stocks_lists.details, stocks_lists.entries, stocks_lists.outputs, stocks_lists.created, stocks_lists.modified,
             stocks_lists.deleted, stocks_lists.created_id, stocks_lists.modified_id, stocks_lists.deleted_id') // tabloya birleştirilen kolonları seçiyoruz.
             ->join('stores','stocks_lists.stores_id=stores.stores_id') // join ile stores ve shelves tablosunu birleştiriyoruz.
-            ->join('stokcards','stocks_lists.stockcard_id=stokcards.stockcard_id')
-            ->join('shelves','stocks_lists.shelve_id=shelves.shelve_id')
+            ->join('stokcards','stocks_lists.stockcard_id=stokcards.stockcard_id') // stok kartı ile stoks tablosunu birleştiriyoruz
+            ->join('shelves','stocks_lists.shelve_id=shelves.shelve_id') // raf tablosu ile stok tablosunu birleştiriyoruz
             ->where(["stocks_lists.deleted"=>null,"stocks_lists.deleted_id"=>null]) // verilerin gösterilmesinde koşulumuz.
-            ->get("stocks_lists")->result(); // shelves tablosundan tüm sonuçları alıyor.
+            ->get("stocks_lists")->result(); //  tüm sonuçları alıyor.
             echo json_encode( $data ); // $data dizesini json formatına döndürerek ekrana basıyor.
         }
         catch(Exception $e){
@@ -30,7 +30,7 @@ class Stocks_model extends CI_Model{
     }
     public function add($_arraydata){
         // stok hareketi ekleyecek kullanici sorgusu
-        $whereuser=array( // ekleyenen deponun gecerli olup olmadigini sorgusunu hazirliyoruz
+        $whereuser=array( // ekleyen kullanıcı sorgusunu hazırlıyoruz
             "users_id"=>$_arraydata["created_id"],
             "deleted"=>null
         );
@@ -42,8 +42,8 @@ class Stocks_model extends CI_Model{
             "stockcard_id"=>$_arraydata["stockcard_id"],
             "deleted"=>null
         );
-        $created_card = $this->Stockcards_model->get_stok_cards($wherecard); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-        if(!$created_card) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+        $created_card = $this->Stockcards_model->get_stok_cards($wherecard); // belirtilen stok kartı bilgisini ilgili modele gönderip kontrol ettiriyoruz. 
+        if(!$created_card) return 0; // stok kartı bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
         // depo bilgisi sorgusu
         $wherestores=array( // urun depo kartının gecerli olup olmadigini sorgusunu hazirliyoruz
@@ -66,7 +66,7 @@ class Stocks_model extends CI_Model{
         $amount;
         if($_arraydata['record_type']=='entries') $amount=$_arraydata['entries'];
         else if ($_arraydata['record_type']=='outputs') $amount=$_arraydata['outputs'];
-        $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $inserarray=array( // ekleyecegimi stok hareket kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "stockcard_id"=>$_arraydata['stockcard_id'],
             "stores_id"=>$_arraydata['stores_id'],
             "date"=>$_arraydata['date'],
@@ -140,7 +140,7 @@ class Stocks_model extends CI_Model{
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
         if(!$created_user) return 0;
-        $deletearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $deletearray=array( // silinecek stok hareket kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );

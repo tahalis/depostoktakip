@@ -6,6 +6,7 @@ class Sub_Productgroups_model extends CI_Model{
         parent::__construct(); 
         $this->load->model("Users_model");  // ilgili kullanici tablosu modelimizi kullanici idlerini kontrol etmek üzere yüklüyoruz.
         $this->load->model("Productgroups_model");  // ilgili Urun Grubu tablosu modelimizi urungrubu idlerini kontrol etmek üzere yüklüyoruz.
+        $this->load->model("Stockcards_model");
     }
     public function getall(){
         try
@@ -38,7 +39,7 @@ class Sub_Productgroups_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $inserarray=array( // ekleyecegimiz alt ürün grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "subproductgroup_name"=>$_arraydata['subproductgroup_name'],
                 "productgroup_id"=>$_arraydata['productgroup_id'],
                 "created"=>date("Y-m-d H:i:s"), 
@@ -60,11 +61,11 @@ class Sub_Productgroups_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // güncelleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $whereproductgroup=array( // ekleyen kullanicinin gecerli ust urun grubu bilgisi olup olmadigini sorgusunu hazirliyoruz
+            $whereproductgroup=array( // güncelleyen kullanicinin gecerli ust urun grubu bilgisi olup olmadigini sorgusunu hazirliyoruz
                 "productgroup_id"=>$_arraydata["productgroup_id"],
                 "deleted"=>null
             );
-            $created_group = $this->Productgroups_model->getproductgroup($whereproductgroup); // eklenecek urun grubunun  gecerli olup olmadığını kontrol ediyoruz.
+            $created_group = $this->Productgroups_model->getproductgroup($whereproductgroup); // güncellenecek urun grubunun  gecerli olup olmadığını kontrol ediyoruz.
             if(!$created_group) return 0; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
             $updatearray=array( // güncellenecek urun alt grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "subproductgroup_name"=>$_arraydata['subproductgroup_name'],
@@ -80,20 +81,20 @@ class Sub_Productgroups_model extends CI_Model{
         }
     }
     public function delete($_arraydata){
-        $whereuser=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
+        $whereuser=array( // silen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "users_id"=>$_arraydata["deleted_id"],
             "deleted"=>null
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
         if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-        /*$whereusers=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
-            "groups_id"=>$_arraydata["id"],
+        $wherestokcards=array( // silinen alt grup bilgisine ait stok kartı kontrolu icin sorgu hazırlanması
+            "subproductgroup_id "=>$_arraydata["subproductgroup_id"],
             "deleted"=>null,
         );
-        $created_users = $this->Users_model->getUsers($whereusers); // silme islemi gerceklestirilecek grup ile ilgili kullanici kontrolu 
-        if($created_users) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
-        */
-        $deletearray=array( // güncellenecek alt urun grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $created_stokcards = $this->Stockcards_model->get_stok_cards($wherestokcards); // silme islemi gerceklestirilecek grup ile ilgili stok kart kontrolu 
+        if($created_stokcards) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
+        
+        $deletearray=array( // silinecek alt urun grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );

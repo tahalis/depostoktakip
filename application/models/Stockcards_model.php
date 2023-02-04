@@ -5,10 +5,9 @@ class Stockcards_model extends CI_Model{
     {
         parent::__construct(); 
         $this->load->model("Users_model");  // ilgili kullanici tablosu modelimizi kullanici idlerini kontrol etmek üzere yüklüyoruz.
-        //$this->load->model("Stores_model");  // ilgili Depo tablosu modelimizi depo idlerini kontrol etmek üzere yüklüyoruz.
-        //$this->load->model("Shelves_model"); // ilgili raf modelimizi raf idlerini kontrol etmek için yüklüyoruz
-        $this->load->model("Productgroups_model");
-        $this->load->model("Sub_Productgroups_model");
+        $this->load->model("Productgroups_model"); // ilgili ürün grupları işlemleri için ilgili modeli yüklüyoruz
+        $this->load->model("Sub_Productgroups_model"); // ürün grupları ile ilgili alt ürün grupları modelini yüklüyoruz.
+        $this->load->model("Stocks_model");
     }
     public function getall(){
         try
@@ -19,7 +18,7 @@ class Stockcards_model extends CI_Model{
             ->join('product_groups','stokcards.productgroup_id=product_groups.productgroup_id')
             ->join('sub_product_groups','stokcards.subproductgroup_id=sub_product_groups.subproductgroup_id')
             ->where(["stokcards.deleted"=>null,"stokcards.deleted_id"=>null]) // verilerin gösterilmesinde koşulumuz.
-            ->get("stokcards")->result(); // shelves tablosundan tüm sonuçları alıyor.
+            ->get("stokcards")->result(); // tüm sonuçları alıyor.
             echo json_encode( $data ); // $data dizesini json formatına döndürerek ekrana basıyor.
         }
         catch(Exception $e){
@@ -45,7 +44,7 @@ class Stockcards_model extends CI_Model{
                 "productgroup_id"=>$_arraydata["productgroup_id"],
                 "deleted"=>null
             );
-            $created_productg = $this->Productgroups_model->getproductgroup($whereproduct); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
+            $created_productg = $this->Productgroups_model->getproductgroup($whereproduct); // eklenen stok kartı ile ilgili belirtilen ürün grubunu kontrol ediyoruz 
             if(!$created_productg) return 0; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
             // alt urun grubu bilgisi gecerlimi kontrol ediyoruz
@@ -54,12 +53,10 @@ class Stockcards_model extends CI_Model{
                 "productgroup_id"=>$_arraydata["productgroup_id"],
                 "deleted"=>null,
             );
-            $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // ekleme islemi gerceklestirilecek grup ile ilgili  kontrol 
+            $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // ekleme islemi gerceklestirilecek alt grup ile ilgili  kontrol 
             if(!$created_subproduct_group) return 0; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
            
-        
-           
-            $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $inserarray=array( // ekleyecegimi stok kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productname"=>$_arraydata['productname'],
                 "productgroup_id"=>$_arraydata['productgroup_id'],
                 "subproductgroup_id"=>$_arraydata['subproductgroup_id'],
@@ -99,7 +96,7 @@ class Stockcards_model extends CI_Model{
             );
             $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // guncelleme islemi gerceklestirilecek grup ile ilgili  kontrol 
             if(!$created_subproduct_group) return 0; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
-            $updatearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $updatearray=array( // güncellenecek stok kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productname"=>$_arraydata['productname'],
                 "productgroup_id"=>$_arraydata['productgroup_id'],
                 "subproductgroup_id"=>$_arraydata['subproductgroup_id'],
@@ -120,14 +117,15 @@ class Stockcards_model extends CI_Model{
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
         if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-        /*$whereusers=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
-            "groups_id"=>$_arraydata["id"],
+
+        $wherestocks=array( // silinen stok kartının stok kaydı sorgusunu hazırlıyoruz
+            "stockcard_id"=>$_arraydata["stockcard_id"],
             "deleted"=>null,
         );
-        $created_users = $this->Users_model->getUsers($whereusers); // silme islemi gerceklestirilecek grup ile ilgili kullanici kontrolu 
-        if($created_users) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
-        */
-        $deletearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $created_stocks = $this->Stocks_model->gets_stocks_list($wherestocks); // silme islemi gerceklestirilecek stok kartı ile ilgili stok hareketi kontrolu 
+        if($created_stocks) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
+        
+        $deletearray=array( // silinecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
@@ -138,7 +136,7 @@ class Stockcards_model extends CI_Model{
         try
         {
             if(!$where)return 0; // gelen id verisi pozitif değil ise geri dönüş sağlıyoruz.
-            return $groupdata=$this->db->where($where)->get("stokcards")->result(); // shelves tablosundan tüm sonuçları alıyor ve geri gönderiyoruz.
+            return $groupdata=$this->db->where($where)->get("stokcards")->result(); //  tüm sonuçları alıyor ve geri gönderiyoruz.
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.

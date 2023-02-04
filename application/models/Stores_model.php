@@ -1,11 +1,11 @@
 <?php
-date_default_timezone_set("Europe/Istanbul"); //  zaman tarih referansını
+date_default_timezone_set("Europe/Istanbul"); //  zaman tarih referansı
 class Stores_model extends CI_Model{
     public function __construct()
     {
         parent::__construct(); 
         $this->load->model("Users_model");  // ilgili kullanici tablosu modelimizi kullanici idlerini kontrol etmek üzere yüklüyoruz.
-        $this->load->model("Shelves_model");
+        $this->load->model("Shelves_model"); // depolarımız ile ilgili raf bilgilerini almak için ilgili modelimizi yüklüyoruz.
     }
     public function getall(){
         try
@@ -28,7 +28,7 @@ class Stores_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $inserarray=array( // ekleyecegimiz depo kartı  kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "stores_name"=>$_arraydata['stores_name'],
                 "created"=>date("Y-m-d H:i:s"), 
                 "created_id"=>$_arraydata['created_id']
@@ -49,7 +49,8 @@ class Stores_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // güncelleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $updatearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+
+            $updatearray=array( // güncellenecek depo kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "stores_name"=>$_arraydata['stores_name'],
                 "modified"=>date("Y-m-d H:i:s"), 
                 "modified_id"=>$_arraydata['modified_id']
@@ -62,21 +63,21 @@ class Stores_model extends CI_Model{
         }
     }
     public function delete($_arraydata){
-        $whereuser=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
+        $whereuser=array( // silen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "users_id"=>$_arraydata["deleted_id"],
             "deleted"=>null
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
         if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
-        $whereshelves=array( //  raf verisinin guncel dolu olup olmadigini sorgusunu hazirliyoruz
+        $whereshelves=array( //  raf verisinin guncel dolu olup olmadiginin sorgusunu hazirliyoruz
             "stores_id"=>$_arraydata["stores_id"],
             "deleted"=>null,
         );
-        $created_shelves = $this->Shelves_model->getshelve($whereshelves); // silme islemi gerceklestirilecek grup ile ilgili kullanici kontrolu 
+        $created_shelves = $this->Shelves_model->getshelve($whereshelves); // silme islemi gerceklestirilecek grup ile ilgili raf verisi kontrolu 
         if($created_shelves) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
         
-        $deletearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $deletearray=array( // silinecek depo kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
@@ -86,8 +87,8 @@ class Stores_model extends CI_Model{
     public function getstores($where=array()){
         try
         {
-            if(!$where)return 0; // gelen id verisi pozitif değil ise geri dönüş sağlıyoruz.
-            return $groupdata=$this->db->where($where)->get("stores")->row(); // users tablosundan tüm sonuçları alıyor ve geri gönderiyoruz.
+            if(!$where)return 0; // gelen sorgu verisi pozitif değil ise geri dönüş sağlıyoruz.
+            return $groupdata=$this->db->where($where)->get("stores")->row(); // stores tablosundan tüm sonuçları alıyor ve geri gönderiyoruz.
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.

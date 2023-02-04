@@ -8,27 +8,29 @@ class Users_model extends CI_Model{
     }
     public function getall(){ // tüm listeyi çekiyor.
         
-        $data=$this->db->select('users.users_id, users.user_name, users.created, users.modified, users.deleted, user_groups.usergroup_name')->where("users.deleted",null)->join("user_groups","users.groups_id=user_groups.groups_id",'inner')->get("users")->result(); // users tablosundan tüm sonuçları alıyor.
+        $data=$this->db->select('users.users_id, users.user_name, users.created, users.modified, users.deleted, user_groups.usergroup_name')->where("users.deleted",null)
+        ->join("user_groups","users.groups_id=user_groups.groups_id",'inner')
+        ->get("users")
+        ->result(); // users tablosundan tüm sonuçları alıyor.
         echo json_encode( $data ); // $data dizesini json formatına döndürerek ekrana basıyor.
     }
     public function add($_arraydata){
-        if($_arraydata['user_name']=="" || $_arraydata['user_name']=="" || !isset($_arraydata['user_name'])) return "Bilgiler bos birakilamaz"; // istediğimiz bilgileri kontrol ediyoruz.
         $whereusergroup=array( // ekleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "groups_id"=>$_arraydata["groups_id"],
             "deleted"=>null
         );
-        $created_groups = $this->Usersgroups_model->getUsergroup($whereusergroup); // eklenecek kategori sorgusu yapiliyor
+        $created_groups = $this->Usersgroups_model->getUsergroup($whereusergroup); // eklenecek kullanici grubu sorgusu yapiliyor
         if(!$created_groups) return 0; // grup bilgisi gecerli degil ise negatif geri donus sagliyoruz  
         $_arraydata['created']=date("Y-m-d H:i:s"); // created tarihi oluşturuyoruz.
         $results=$this->db->insert("users",$_arraydata); // bilgileri veritabanına gönderiyoruz.
         return $results; // işlem sonucunu geri gönderiyoruz
     }
     public function update($_updatearray){ 
-        $whereusergroup=array( // ekleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
+        $whereusergroup=array( // ekleyen kullanicinin gecerli olup olmadigi sorgusunu hazirliyoruz
             "groups_id"=>$_updatearray["groups_id"],
             "deleted"=>null
         );
-        $created_groups = $this->Usersgroups_model->getUsergroup($whereusergroup); // eklenecek kategori sorgusu yapiliyor
+        $created_groups = $this->Usersgroups_model->getUsergroup($whereusergroup); // eklenecek kullanıcı grubu sorgusu yapiliyor
         if(!$created_groups) return 0; // grup bilgisi gecerli degil ise negatif geri donus sagliyoruz  
         $whereuser=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "users_id"=>$_updatearray["modified_id"],
@@ -47,7 +49,7 @@ class Users_model extends CI_Model{
        
     }
     public function delete($_delarray){
-        if($_delarray['users_id']=="" || $_delarray['users_id']=="" || !isset($_delarray['users_id'])) return 0; // istediğimiz bilgileri kontrol ediyoruz.
+        
         $whereuser=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "users_id"=>$_delarray["deleted_id"],
             "deleted"=>null

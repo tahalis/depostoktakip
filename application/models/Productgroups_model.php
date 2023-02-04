@@ -5,7 +5,7 @@ class Productgroups_model extends CI_Model{
     {
         parent::__construct(); 
         $this->load->model("Users_model");  // ilgili kullanici tablosu modelimizi kullanici idlerini kontrol etmek üzere yüklüyoruz.
-        $this->load->model("Sub_Productgroups_model");
+        $this->load->model("Sub_Productgroups_model"); // alt ürün grupları tablosunda işlem için modeli yüklüyoruz.
     }
     public function getall(){
         try
@@ -28,7 +28,7 @@ class Productgroups_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $inserarray=array( // ekleyecegimi ürün grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productgroup_name"=>$_arraydata['productgroup_name'],
                 "created"=>date("Y-m-d H:i:s"), 
                 "created_id"=>$_arraydata['created_id']
@@ -49,7 +49,7 @@ class Productgroups_model extends CI_Model{
             );
             $created_user = $this->Users_model->getUser($whereuser); // güncelleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $updatearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $updatearray=array( // güncellenecek ürün grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productgroup_name"=>$_arraydata['productgroup_name'],
                 "modified"=>date("Y-m-d H:i:s"), 
                 "modified_id"=>$_arraydata['modified_id']
@@ -73,10 +73,10 @@ class Productgroups_model extends CI_Model{
             "productgroup_id"=>$_arraydata["productgroup_id"],
             "deleted"=>null,
         );
-        $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // silme islemi gerceklestirilecek grup ile ilgili kullanici kontrolu 
+        $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // silme islemi gerceklestirilecek grup ile ilgili alt grup kontrolu 
         if($created_subproduct_group) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
         
-        $deletearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $deletearray=array( // silinecek ürün grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
@@ -86,8 +86,8 @@ class Productgroups_model extends CI_Model{
     public function getproductgroup($where=array()){
         try
         {
-            if(!$where)return 0; // gelen id verisi pozitif değil ise geri dönüş sağlıyoruz.
-            return $groupdata=$this->db->where($where)->get("product_groups")->row(); // users tablosundan tüm sonuçları alıyor ve geri gönderiyoruz.
+            if(!$where)return 0; // gelen sorgu verisi pozitif değil ise geri dönüş sağlıyoruz.
+            return $groupdata=$this->db->where($where)->get("product_groups")->row(); // tüm sonuçları alıyor ve geri gönderiyoruz.
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.

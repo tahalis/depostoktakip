@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set("Europe/Istanbul"); //  zaman tarih referansını
+date_default_timezone_set("Europe/Istanbul"); //  zaman tarih referansı
 class Shelves_model extends CI_Model{
     public function __construct()
     {
@@ -20,7 +20,7 @@ class Shelves_model extends CI_Model{
             echo json_encode( $data ); // $data dizesini json formatına döndürerek ekrana basıyor.
         }
         catch(Exception $e){
-            //hata var ise burada yakalanır
+            
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.
         }
         
@@ -34,13 +34,13 @@ class Shelves_model extends CI_Model{
             );
             $created_store = $this->Stores_model->getstores($wherestore); // eklenecek olan deponun gecerli olup olmadığını kontrol ediyoruz.
             if(!$created_store) return 0; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $whereuser=array( // ekleyenen deponun gecerli olup olmadigini sorgusunu hazirliyoruz
+            $whereuser=array( // ekleyen kullanıcının gecerli olup olmadigini sorgusunu hazirliyoruz
                 "users_id"=>$_arraydata["created_id"],
                 "deleted"=>null
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
             if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $inserarray=array( // ekleyecegimi kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $inserarray=array( // ekleyecegimi raf  kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "shelve_name"=>$_arraydata['shelve_name'],
                 "stores_id"=>$_arraydata['stores_id'],
                 "created"=>date("Y-m-d H:i:s"), 
@@ -66,9 +66,9 @@ class Shelves_model extends CI_Model{
                 "stores_id"=>$_arraydata["stores_id"],
                 "deleted"=>null
             );
-            $created_store = $this->Stores_model->getstores($wherestore); // eklenecek olan deponun gecerli olup olmadığını kontrol ediyoruz.
+            $created_store = $this->Stores_model->getstores($wherestore); // guncellenecek olan deponun gecerli olup olmadığını kontrol ediyoruz.
             if(!$created_store) return 0; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
-            $updatearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+            $updatearray=array( // güncellenecek raf kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "shelve_name"=>$_arraydata['shelve_name'],
                 "stores_id"=>$_arraydata['stores_id'],
                 "modified"=>date("Y-m-d H:i:s"), 
@@ -82,28 +82,28 @@ class Shelves_model extends CI_Model{
         }
     }
     public function delete($_arraydata){
-        $whereuser=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
+        $whereuser=array( // silen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
             "users_id"=>$_arraydata["deleted_id"],
             "deleted"=>null
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
         if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-        $wherestockcards=array( // guncelleyen kullanicinin gecerli olup olmadigini sorgusunu hazirliyoruz
+        $wherestockcards=array( // silinen raf kaydının gecerli stok kartlari olup olmadigini sorgusunu hazirliyoruz
             "shelve_id"=>$_arraydata["shelve_id"],
             "deleted"=>null,
         );
 
-        $created_stockcards = $this->Stockcards_model->get_stok_cards($wherestockcards); // silme islemi gerceklestirilecek kayitli raflar ile ilgili veri kontrolu 
+        $created_stockcards = $this->Stockcards_model->get_stok_cards($wherestockcards); // raf ile ilgili stok kartı kontrolü için modelin ilgili metodunu kullanıyoruz.
         if($created_stockcards) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
 
         $wherestocks=array( // silinen rafin kayitli urunleri var mı kontrol sorgusu
             "shelve_id"=>$_arraydata["shelve_id"],
             "deleted"=>null,
         );
-        $created_stocks = $this->Stocks_model->gets_stocks_list($wherestocks); // silme islemi gerceklestirilecek kayitli raflar ile ilgili veri kontrolu 
+        $created_stocks = $this->Stocks_model->gets_stocks_list($wherestocks); // silme islemi gerceklestirilecek kayitli stok hareketleri ile ilgili veri kontrolu 
         if($created_stocks) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
         
-        $deletearray=array( // güncellenecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
+        $deletearray=array( // silinecek raf kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
