@@ -240,6 +240,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<p>Aşağıdaki json çıktısını ilgili alanları doldurarak sunucuya gönderin.</p>
 		<code>{"stocks_id ":"silinecek_id","deleted_id":"silen_user_id"}</code>
 		
+		<hr>
+
+		<h4>Getir fonksiyonu ile ilgili bilgiler:</h4>
+		<p>Getir hizmetine ulaşmak için url adresi :</p>
+		<code><?php echo base_url(); ?>getir</code>
+		<p>Getir hizmeti istenen verileri modüllerden ham bir şekilde ilgili tablolar ile birleştirmeden geri döndürür. Örnekleri aşağıda yer almaktadır.</p>
+		<h3>Getir ile veri getirilebilecek modüller;</h3>
+		<code>
+		<?php echo base_url(); ?>getir/kullanicilar<br>
+		<?php echo base_url(); ?>getir/kullanicigruplari<br>
+		<?php echo base_url(); ?>getir/depolar<br>
+		<?php echo base_url(); ?>getir/raflar<br>
+		<?php echo base_url(); ?>getir/urungruplari<br>
+		<?php echo base_url(); ?>getir/alturungruplari<br>
+		<?php echo base_url(); ?>getir/stokkartlari<br>
+		<?php echo base_url(); ?>getir/stokhareketleri
+		</code>
+		<p>yukarıdaki adreslere aşağıdaki örneklerdeki gibi json formatında veri gönderildiğinde sistem istenen koşullara uygun verileri geri döndürecektir.</p>
+		<code>
+			Örnek json formatı : <br>
+			{"created":"2022-03-24 20:16:49"} <br>
+			gönderilecek parametreler istenen modüllerde normal veri alışverişinde kullanılan parametreler ile eşleşmelidir.<br><br>
+
+			{"deleted !=":"null"} // deleted kısımlarının boş olmayanlarını çekmektedir.<br>
+			{"deleted":"null"} // deleted kısımlarının boş olanlarını çekmektedir.<br>
+			{"created >":"YYYY-AA-GG"} // belirtilen tarihten buyuk olanları çekmektedir.<br>
+			{"created <":"YYYY-AA-GG"} // belirtilen tarihten küçük olanları çekmektedir.<br>
+			{"created >=":"YYYY-AA-GG"} // belirtilen tarihten buyuk ve eşit olanları çekmektedir.<br>
+			{"created <=":"YYYY-AA-GG"} // belirtilen tarihten küçük ve eşit olanları çekmektedir.<br>
+			{"created":"YYYY-AA-GG"} // belirtilen veriye eşit olanları çekmektedir.<br>
+			<br>
+			yukarıdaki örneklere uygun birden fazla uygun parametre göndererek filtre edebilirsiniz.
+
+		</code>
 	
 	</div>
 

@@ -193,3 +193,25 @@ $route['stokhareketleri/guncelle']="Stocks_controller/update";
 {"stocks_id ":"silinecek_id","deleted_id":"0"}
 */
 $route['stokhareketleri/sil']="Stocks_controller/delete";
+
+//----------------------------------------------------------
+// Getir islemleri------------------------------------------
+/* Veri gönderilecek adresin sonuna "domain.com/getir/stokhareket"  şeklinde çağırılmak istenen modül ve modullere bagli parametreler ile girilmelidir.
+dogru girilen parametreler ile ilgili aramalarda filtrelenmiş verileri tabloları BİRLEŞTİRMEDEN HAM HALİNDE getirecektir.
+
+gönderilecek veri örneği : 
+
+{"deleted !=":"null"} // deleted kısımlarının boş olmayanlarını çekmektedir.
+{"deleted":"null"} // deleted kısımlarının boş olanlarını çekmektedir.
+
+Veriler json formati ile sunucuya gönderilmelidir.
+
+*/
+$route['getir/kullanicilar']="Search_contoller/kullanicilar";
+$route['getir/kullanicigruplari']="Search_contoller/kullanicigruplari";
+$route['getir/depolar']="Search_contoller/depolar";
+$route['getir/raflar']="Search_contoller/raflar";
+$route['getir/urungruplari']="Search_contoller/urungruplari";
+$route['getir/alturungruplari']="Search_contoller/alturungruplari";
+$route['getir/stokkartlari']="Search_contoller/stokkartlari";
+$route['getir/stokhareketleri']="Search_contoller/stokhareketleri";

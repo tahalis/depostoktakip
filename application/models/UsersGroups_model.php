@@ -96,4 +96,14 @@ class Usersgroups_model extends CI_Model{
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.
         }
     }
+    public function getUsergroups($where=array()){
+        try
+        {
+            if(!$where)return 0; // gelen sorgu verisi pozitif değil ise geri dönüş sağlıyoruz.
+            return $groupdata=$this->db->where($where)->get("user_groups")->result(); // tüm sonuçları alıyor ve geri gönderiyoruz.
+        }
+        catch(Exception $e){
+            echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.
+        }
+    }
 }

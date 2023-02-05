@@ -87,7 +87,7 @@ class Productgroups_model extends CI_Model{
         try
         {
             if(!$where)return 0; // gelen sorgu verisi pozitif değil ise geri dönüş sağlıyoruz.
-            return $groupdata=$this->db->where($where)->get("product_groups")->row(); // tüm sonuçları alıyor ve geri gönderiyoruz.
+            return $groupdata=$this->db->where($where)->get("product_groups")->result(); // tüm sonuçları alıyor ve geri gönderiyoruz.
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderilir.
