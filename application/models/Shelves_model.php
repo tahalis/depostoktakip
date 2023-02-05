@@ -33,13 +33,13 @@ class Shelves_model extends CI_Model{
                 "deleted"=>null
             );
             $created_store = $this->Stores_model->getstores($wherestore); // eklenecek olan deponun gecerli olup olmadığını kontrol ediyoruz.
-            if(!$created_store) return 0; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_store) return "Depo bilgisi gecerli degil."; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
             $whereuser=array( // ekleyen kullanıcının gecerli olup olmadigini sorgusunu hazirliyoruz
                 "users_id"=>$_arraydata["created_id"],
                 "deleted"=>null
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-            if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_user) return "Kullanici gecersiz."; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
             $inserarray=array( // ekleyecegimi raf  kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "shelve_name"=>$_arraydata['shelve_name'],
                 "stores_id"=>$_arraydata['stores_id'],
@@ -47,7 +47,10 @@ class Shelves_model extends CI_Model{
                 "created_id"=>$_arraydata['created_id']
             );
             $results=$this->db->insert("shelves",$inserarray); // bilgileri veritabanına gönderiyoruz.
-            return $results; // işlem sonucunu geri gönderiyoruz
+            if($results) return "Kayit Basarili.";
+            else return "Kayit Basarisiz.";
+                
+         
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderiyoruz
@@ -61,13 +64,13 @@ class Shelves_model extends CI_Model{
                 "deleted"=>null
             );
             $created_user = $this->Users_model->getUser($whereuser); // güncelleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-            if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_user) return "Kullanici bilgisi gecersiz."; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
             $wherestore=array( // ekleyen kullanicinin gecerli depo bilgisi olup olmadigini sorgusunu hazirliyoruz
                 "stores_id"=>$_arraydata["stores_id"],
                 "deleted"=>null
             );
             $created_store = $this->Stores_model->getstores($wherestore); // guncellenecek olan deponun gecerli olup olmadığını kontrol ediyoruz.
-            if(!$created_store) return 0; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_store) return "Depo verisi gecersiz veya silinmis depoda islem yapilmakta."; // depo bilgisi gecerli degil ise negatif geri donus sagliyoruz
             $updatearray=array( // güncellenecek raf kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "shelve_name"=>$_arraydata['shelve_name'],
                 "stores_id"=>$_arraydata['stores_id'],
@@ -75,7 +78,8 @@ class Shelves_model extends CI_Model{
                 "modified_id"=>$_arraydata['modified_id']
             );
             $results=$this->db->where("shelve_id",$_arraydata['shelve_id'])->update("shelves",$updatearray); // bilgileri veritabanına gönderiyoruz.
-            return $results; // işlem sonucunu geri gönderiyoruz
+            if($results)return "Guncelleme islemi basarili."; // işlem sonucunu geri gönderiyoruz      
+            else return "Guncelleme islemi basarisiz.";
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderiyoruz    
@@ -87,28 +91,22 @@ class Shelves_model extends CI_Model{
             "deleted"=>null
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-        if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
-        $wherestockcards=array( // silinen raf kaydının gecerli stok kartlari olup olmadigini sorgusunu hazirliyoruz
-            "shelve_id"=>$_arraydata["shelve_id"],
-            "deleted"=>null,
-        );
-
-        $created_stockcards = $this->Stockcards_model->get_stok_cards($wherestockcards); // raf ile ilgili stok kartı kontrolü için modelin ilgili metodunu kullanıyoruz.
-        if($created_stockcards) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
-
+        if(!$created_user) return "Kullanici verisi gecersiz."; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+      
         $wherestocks=array( // silinen rafin kayitli urunleri var mı kontrol sorgusu
             "shelve_id"=>$_arraydata["shelve_id"],
             "deleted"=>null,
         );
         $created_stocks = $this->Stocks_model->gets_stocks_list($wherestocks); // silme islemi gerceklestirilecek kayitli stok hareketleri ile ilgili veri kontrolu 
-        if($created_stocks) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
+        if($created_stocks) return "Silinecek Raf bilgisine kayitli stok hareketleri bulunuyor."; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
         
         $deletearray=array( // silinecek raf kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
         $results=$this->db->where("shelve_id",$_arraydata['shelve_id'])->update("shelves",$deletearray); // bilgileri veritabanına gönderiyoruz.
-        return $results; // işlem sonucunu geri gönderiyoruz      
+        if($results)return "Silme islemi basarili."; // işlem sonucunu geri gönderiyoruz      
+        else return "Silme islemi basarisiz.";
     }
     public function getshelve($where=array()){
         try

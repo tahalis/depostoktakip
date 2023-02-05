@@ -21,8 +21,7 @@ class Shelves_controller extends CI_Controller {
              die();
         }
         $results= $this->Shelves_model->add($_arraydata); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-        if($results)echo "Kayit Basarili."; // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-        else echo "Kayit Basarisiz";
+        echo $results;
     }
     public function update(){
         $_updatearray = json_decode(file_get_contents('php://input'), true);  // gelen json veriyi dize olarak sakliyoruz.
@@ -31,8 +30,7 @@ class Shelves_controller extends CI_Controller {
              die();
         }
         $updateresult= $this->Shelves_model->update($_updatearray); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-        if($updateresult)echo $_updatearray['shelve_id']." Numarali Raf duzenlendi."; // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-        else echo $_updatearray['shelve_id']." Numarali Raf duzenlenemedi";
+        echo $updateresult;
     }
     public function delete(){
        
@@ -42,7 +40,6 @@ class Shelves_controller extends CI_Controller {
             die();
         }
         $result= $this->Shelves_model->delete($_delarray); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-        if($result)echo $_delarray["shelve_id"]." Numarali Depo Silindi.";  // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-        else echo "Belirtilen Depo silinemedi.";
+        echo $result;
     }
 }

@@ -37,7 +37,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null
             );
             $created_user = $this->Users_model->getUser($whereuser); // ekleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-            if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_user) return "Kullanici gecerli degil"; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
             // ürün grubu sorgulaması
             $whereproduct=array( // urun gurubunun gecerli olup olmadigi bilgisi
@@ -45,7 +45,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null
             );
             $created_productg = $this->Productgroups_model->getproductgroup($whereproduct); // eklenen stok kartı ile ilgili belirtilen ürün grubunu kontrol ediyoruz 
-            if(!$created_productg) return 0; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_productg) return "Urun grubu bilgisi gecerli degil"; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
             // alt urun grubu bilgisi gecerlimi kontrol ediyoruz
             $wheressubgroup=array( //  alt grup verisinin guncel dolu olup olmadigini sorgusunu hazirliyoruz
@@ -54,7 +54,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null,
             );
             $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // ekleme islemi gerceklestirilecek alt grup ile ilgili  kontrol 
-            if(!$created_subproduct_group) return 0; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
+            if(!$created_subproduct_group) return "Alt urun grubu ".$_arraydata['productgroup_id']." numarali gruba ait degil"; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
            
             $inserarray=array( // ekleyecegimi stok kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productname"=>$_arraydata['productname'],
@@ -64,7 +64,8 @@ class Stockcards_model extends CI_Model{
                 "created_id"=>$_arraydata['created_id']
             );
             $results=$this->db->insert("stokcards",$inserarray); // bilgileri veritabanına gönderiyoruz.
-            return $results; // işlem sonucunu geri gönderiyoruz
+            if($results)return "Stok karti olusturuldu.";
+            else return "stok karti olusturulamadi";
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderiyoruz
@@ -78,7 +79,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null
             );
             $created_user = $this->Users_model->getUser($whereuser); // güncelleyen kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-            if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_user) return "Kullanici bilgisi gecerli degil"; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
      
              // ürün grubu sorgulaması
              $whereproduct=array( // urun gurubunun gecerli olup olmadigi bilgisi
@@ -86,7 +87,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null
             );
             $created_productg = $this->Productgroups_model->getproductgroup($whereproduct); // guncellenen urun grubunun hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-            if(!$created_productg) return 0; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
+            if(!$created_productg) return "Urun grubu bilgisi gecerli degil"; // urun grubu bilgisi gecerli degil ise negatif geri donus sagliyoruz
                 
             // alt urun grubu bilgisi gecerlimi kontrol ediyoruz
             $wheressubgroup=array( //  alt grup verisinin guncel dolu olup olmadigini sorgusunu hazirliyoruz
@@ -95,7 +96,7 @@ class Stockcards_model extends CI_Model{
                 "deleted"=>null,
             );
             $created_subproduct_group = $this->Sub_Productgroups_model->get_sub_product_group($wheressubgroup); // guncelleme islemi gerceklestirilecek grup ile ilgili  kontrol 
-            if(!$created_subproduct_group) return 0; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
+            if(!$created_subproduct_group) return "Guncellenmek istenen alt urun grubu bilgisi ".$_arraydata['productgroup_id']." numarali urun grubunun alt grubu degil."; // sorgu sonucu negatifse negatif sonuç döndürüyoruz.
             $updatearray=array( // güncellenecek stok kartı kaydinin aldigimiz veriler ile icerigini belirliyoruz.
                 "productname"=>$_arraydata['productname'],
                 "productgroup_id"=>$_arraydata['productgroup_id'],
@@ -104,7 +105,8 @@ class Stockcards_model extends CI_Model{
                 "modified_id"=>$_arraydata['modified_id']
             );
             $results=$this->db->where(["stockcard_id"=>$_arraydata['stockcard_id'],"deleted"=>null])->update("stokcards",$updatearray); // bilgileri veritabanına gönderiyoruz.
-            return $results; // işlem sonucunu geri gönderiyoruz
+            if($results) return "Stok karti guncellendi.";
+            else return "Stok karti guncellenemedi";
         }
         catch(Exception $e){
             echo "Hata ile karsilasildi. ".$e->getMessage(); //hata çıktısı kullaniciya gonderiyoruz    
@@ -116,21 +118,22 @@ class Stockcards_model extends CI_Model{
             "deleted"=>null
         );
         $created_user = $this->Users_model->getUser($whereuser); // silme islemi gerceklestirecek kullanicinin hazirladigimiz sorgu ile bilgilerini cekiyoruz. 
-        if(!$created_user) return 0; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
+        if(!$created_user) return "Kullanici gecerli degil."; // kullanici bilgisi gecerli degil ise negatif geri donus sagliyoruz
 
         $wherestocks=array( // silinen stok kartının stok kaydı sorgusunu hazırlıyoruz
             "stockcard_id"=>$_arraydata["stockcard_id"],
             "deleted"=>null,
         );
         $created_stocks = $this->Stocks_model->gets_stocks_list($wherestocks); // silme islemi gerceklestirilecek stok kartı ile ilgili stok hareketi kontrolu 
-        if($created_stocks) return 0; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
+        if($created_stocks) return "Silinmek istenen stok kartina ait aktif stok hareketleri bulunuyor."; // sorgu sonucu pozitifse negatif sonuç döndürüyoruz.
         
         $deletearray=array( // silinecek kullanici grubu kaydinin aldigimiz veriler ile icerigini belirliyoruz.
             "deleted"=>date("Y-m-d H:i:s"), 
             "deleted_id"=>$_arraydata['deleted_id']
         );
         $results=$this->db->where(["stockcard_id"=>$_arraydata['stockcard_id'],"deleted"=>null])->update("stokcards",$deletearray); // bilgileri veritabanına gönderiyoruz.
-        return $results; // işlem sonucunu geri gönderiyoruz      
+        if($results) return "Stok karti silindi.";
+        else return "Stok karti silinemedi";    
     }
     public function get_stok_cards($where=array()){
         try

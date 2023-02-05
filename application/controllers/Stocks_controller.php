@@ -30,8 +30,7 @@ class Stocks_controller extends CI_Controller{
             }
             
             $results= $this->Stocks_model->add($_arraydata); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-            if($results)echo "Kayit Basarili."; // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-            else echo "Kayit Basarisiz";
+            echo $results; // gelen sonucu kullaniciya gonderiyoruz
         }
     }
     public function update(){
@@ -55,8 +54,7 @@ class Stocks_controller extends CI_Controller{
             }
             
             $results= $this->Stocks_model->update($_arraydata); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-            if($results)echo "Kayit Guncellendi"; // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-            else echo "Kayit Guncellenemedi";
+            echo $results; // gelen sonucu kullaniciya gonderiyoruz
         }
     }
     public function delete(){
@@ -68,9 +66,8 @@ class Stocks_controller extends CI_Controller{
             die();
         }
         
-        $results= $this->Stocks_model->delete($_arraydata); // gelen dizeyi modele kaydolmak üzere gönderiyoruz.
-        if($results)echo $_arraydata["stocks_id"]." Numarali Stok Hareketi Silindi.";  // modelden gelen cevap pozitif ise başarılı değil ise başarısız olarak geri döndürüyoruz. 
-        else echo "Belirtilen Stok Hareketi silinemedi.";
+        $results= $this->Stocks_model->delete($_arraydata); // gelen dizeyi modele guncellemek üzere gönderiyoruz.
+        echo $results; // gelen sonucu kullanici gonderiyoruz
         
     }
 
