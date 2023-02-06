@@ -219,7 +219,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<p>Stok Kartı Silmek için url adresi :</p>
 		<code><?php echo base_url(); ?>stokkartlari/sil</code>
 		<p>Aşağıdaki json çıktısını ilgili alanları doldurarak sunucuya gönderin.</p>
-		<code>{"stockcard_id ":"silinecek_id","deleted_id":"silen_user_id"}</code>
+		<code>{"stockcard_id":"silinecek_id","deleted_id":"silen_user_id"}</code>
 
 		<h4>Stok Hareket işlemleri ile ilgili bilgiler:</h4>
 		<p>Stok hareket listesini görmek için url adresi :</p>
@@ -238,7 +238,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<p>Stok hareketi silmek için url adresi :</p>
 		<code><?php echo base_url(); ?>stokhareketleri/sil</code>
 		<p>Aşağıdaki json çıktısını ilgili alanları doldurarak sunucuya gönderin.</p>
-		<code>{"stocks_id ":"silinecek_id","deleted_id":"silen_user_id"}</code>
+		<code>{"stocks_id":"silinecek_id","deleted_id":"silen_user_id"}</code>
 		
 		<hr>
 
