@@ -203,6 +203,13 @@ gönderilecek veri örneği :
 
 {"deleted !=":"null"} // deleted kısımlarının boş olmayanlarını çekmektedir.
 {"deleted":"null"} // deleted kısımlarının boş olanlarını çekmektedir.
+{"deleted !=":"null"} // deleted kısımlarının boş olmayanlarını çekmektedir.<br>
+{"deleted":"null"} // deleted kısımlarının boş olanlarını çekmektedir.<br>
+{"created >":"YYYY-AA-GG"} // belirtilen tarihten buyuk olanları çekmektedir.<br>
+{"created <":"YYYY-AA-GG"} // belirtilen tarihten küçük olanları çekmektedir.<br>
+{"created >=":"YYYY-AA-GG"} // belirtilen tarihten buyuk ve eşit olanları çekmektedir.<br>
+{"created <=":"YYYY-AA-GG"} // belirtilen tarihten küçük ve eşit olanları çekmektedir.<br>
+{"created":"YYYY-AA-GG"} // belirtilen veriye eşit olanları çekmektedir.<br>
 
 Veriler json formati ile sunucuya gönderilmelidir.
 
