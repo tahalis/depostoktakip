@@ -18,4 +18,4 @@ olusturup ilk kullanicinizi ona tanimlamaniz gerekmektedir. Elle kullanici kaydi
 
 Ayrica veritabanindaki test verilerinde mesela urun gruplarinin alt urun gruplari ayni id numaralarina denk geldigi icin urun grubundan farkli id yazdiginiz zaman kabul
 etmemektedir. o sorun tamamen ust ve alt urun gruplarinin tamamen ayni idlere denk gelmesinden kaynaklidir. Harici yeni alt ve ust urun grubu kayitlari atarak kontrol edebilirsiniz.
-Ayni sorun depo ve raflarda da gecerliridir. Veri tabaninda depo idsi ile eslestirilecek raf idleri ayni olarak olusturulmustur.
+Ayni sorun depo ve raflarda da gecerliridir. Veri tabaninda depo idsi ile eslestirilecek raf idleri ayni olarak olusturulmustur. Fakat birden fazla alt urun grubu ya da depo altina raf ekleyebilirsiniz.
